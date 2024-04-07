@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <audio controls  id="audio"  >
+        <source src ="musica.mp3" type ="audio/ogg"></source>
+    </audio>
+
+    <script>
+        window.onload = function() {
+          var audio = document.getElementById("audio");
+          audio.play();
+        };
+      </script>
+
+<div class="content">
+    <div class="contenedor-p">
+        <div class="contenedor-lineas">
+            <div class="lineas-circulo green"></div>
+            <div class="lineas-circulo red"></div>
+            <div class="lineas-circulo yellow"></div>
+            <div class="lineas-circulo blue"></div>
+            <div class="lineas-circulo orange"></div>
+            
+        </div>
+       
+
+        <div class="contenedor-circulos">
+            <div class="circulo-disparador green"></div>
+            <div class="circulo-disparador red"></div>
+            <div class="circulo-disparador yellow"></div>
+            <div class="circulo-disparador blue"></div>
+            <div class="circulo-disparador orange"></div>
+        </div>
+        
+    </div> 
+</div>    
+    
+
+    <style>
+
+
+        #mensajeJuego{
+        position: absolute;
+        top: 500px;
+        right: 525px;
+        background-color: green; 
+        color: black; 
+        padding: 5px 10px; 
+        border: 2px solid black; 
+        border-radius: 10px; 
+        font-weight: bold; 
+        }
+
+        #puntaje {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: #FFD700; 
+        color: black; 
+        padding: 5px 10px; 
+        border: 2px solid black; 
+        border-radius: 10px; 
+        font-weight: bold; 
+        }
+
+        #pausa {
+        position: absolute;
+        top: 440px;
+        left: 9px;
+        background-color: black; 
+        color: white; 
+        width: 200px; 
+        padding: 5px; 
+        text-align: center; 
+         border: 10px; 
+         }
+        .contenedor{
+            position: relative; 
+            width: 100%;
+            height: 400px;
+            border: 1px solid black;
+            padding-top: 100px;
+            background: url("fondo.PNG") no-repeat; 
+        }
+
+        .content{
+            position: relative; 
+            width: 100%;
+            height: 400px;
+            border: 1px solid black; 
+        }
+        
+        .contenedor-p{
+            position: relative;
+            width: 70%;
+            height: 100%;
+            background: black;
+            margin: auto;
+        }
+        .contenedor-lineas{
+            display: flex;
+            width: 100%;
+            height: 90%;
+            bottom: 20px;
+            flex-wrap: nowrap;
+            justify-content: center;
+            align-items: center;
+            gap: 75px;
+        }
+
+        .lineas-circulo{
+            width: 5px;
+            height: 100%;
+        }
+
+        .contenedor-circulos{
+            display: flex;
+            width: 100%;
+            height: 50px;
+            /*background: blue;*/
+            position: absolute;
+            bottom: 20px;
+            flex-wrap: nowrap;
+            justify-content: center;
+            align-items: center;
+            gap: 50px;
+        }
+
+        .circulo-disparador{
+            width: 30px;
+            height: 30px;
+            border-radius: 50%; 
+        }
+
+        .pista{
+            position: absolute; 
+            bottom: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 200px; 
+            background-color: blue; 
+            z-index: 1; 
+        }
+
+        .circulo{
+            width: 30px;
+            height: 30px;
+            background: white; 
+            border-radius: 50%;
+            position: absolute;
+            margin-left: -13px; 
+        }
+
+        .green{
+            background: green;
+        }
+        .red{
+            background: red;
+        }
+        .yellow{
+            background: yellow;
+        }
+        .blue{
+            background: blue;
+        }
+        .orange{
+            background: orange;
+        }
+    </style>
+    <script>
+        var contenedor = document.querySelector(".contenedor");
+        var contenedorp = document.querySelector(".contenedor-p");
+        var lineasCirculo= document.getElementsByClassName("lineas-circulo");
+        var pista = document.querySelector(".contenedor-circulos")
+        var velocidadCirculo = 3; 
+        var tiempoEntreNotas = 1000; 
+        var tiempoUltimaNota = 0;
+        var puntaje = 0;
+
+        function crearCirculo(){
+            var random= Math.floor(Math.random() * 4)
+            var nuevoCirculo = document.createElement("div");
+            nuevoCirculo.setAttribute("class", "circulo");
+            nuevoCirculo.style.background = lineasCirculo[random].classList[1]
+            nuevoCirculo.style.top = "0px"; 
+            lineasCirculo[random].appendChild(nuevoCirculo);
+            setTimeout(function(){
+                lineasCirculo[random].removeChild(nuevoCirculo); 
+            }, 4000);
+        }
+
+        function generarNota(){
+            var tiempoActual = new Date().getTime();
+            if (tiempoActual - tiempoUltimaNota > tiempoEntreNotas){
+                crearCirculo();
+                tiempoUltimaNota = tiempoActual;
+            }
+        }
+
+        var intervaloCantidad = setInterval(generarNota, tiempoEntreNotas);
+
+        var contador = 0;
+        var intervalo = setInterval(function(){
+            contador = contador + 1;
+
+            var elementos = document.querySelectorAll(".circulo");
+            elementos.forEach(function(elemento){
+                var newPos = parseInt(elemento.style.top) + velocidadCirculo;
+                if (newPos <= contenedorp.offsetHeight - 30) {
+                    elemento.style.top = newPos + "px";
+                } else {
+                    elemento.style.top = "0px";
+                }
+
+                
+                if (parseInt(elemento.style.top) + 30 >= contenedorp.offsetHeight - 180) {
+                    if (parseInt(elemento.style.left) >= parseInt(pista.style.left) && parseInt(elemento.style.left) <= parseInt(pista.style.left) + parseInt(pista.offsetWidth) - 30) {
+                        contenedorp.removeChild(elemento);
+                        puntaje++;
+                        console.log("Puntaje: " + puntaje);
+                        document.getElementById("puntaje").innerText = puntaje; 
+                    }
+                }
+            });
+        }, 10);
+
+
+        document.addEventListener("keyup", function(evento){
+            if(evento.key === "p"|| evento.key === "P"){
+                clearInterval(intervaloCantidad)
+                mostrarMensajePausa();
+            }
+            function mostrarMensajePausa() {
+            var mensajePausa = document.createElement("div");
+             mensajePausa.textContent = "Juego pausado";
+            mensajePausa.style.position = "absolute";
+            mensajePausa.style.top = "50%";
+            mensajePausa.style.left = "50%";
+             mensajePausa.style.transform = "translate(-50%, -50%)";
+             mensajePausa.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
+            mensajePausa.style.color = "white";
+             mensajePausa.style.padding = "20px";
+             mensajePausa.style.borderRadius = "10px";
+             mensajePausa.style.fontFamily = "Arial, sans-serif";
+             mensajePausa.style.fontSize = "24px";
+              mensajePausa.style.textAlign = "center";
+              mensajePausa.style.zIndex = "9999";
+              document.body.appendChild(mensajePausa);
+
+    setTimeout(function() {
+      document.body.removeChild(mensajePausa);
+    }, 10000); 
+  }
+        })
+        document.addEventListener("keyup", function(evento){
+            if(evento.key === "f"){
+                var elementos = document.querySelectorAll(".circulo");
+                elementos.forEach(function(elemento){
+                    var circleTop = parseInt(elemento.style.top);
+                    console.log(circleTop+" >= "+ (contenedorp.offsetHeight- 100) +" y "+circleTop+" <= "+(contenedorp.offsetHeight - 20))
+                    if (circleTop >= (contenedorp.offsetHeight - 100) && circleTop <= (contenedorp.offsetHeight - 20)) {
+                        console.log("siu")
+                            puntaje++;
+                            console.log("Puntaje: " + puntaje);
+                            document.getElementById("puntaje").innerText = puntaje; 
+                    }
+                });
+            }
+        });
+        document.addEventListener("keyup", function(evento){
+            if(evento.key === "g"){
+                var elementos = document.querySelectorAll(".circulo");
+                elementos.forEach(function(elemento){
+                    var circleTop = parseInt(elemento.style.top);
+                    console.log(circleTop+" >= "+ (contenedorp.offsetHeight- 100) +" y "+circleTop+" <= "+(contenedorp.offsetHeight - 20))
+                    if (circleTop >= (contenedorp.offsetHeight - 100) && circleTop <= (contenedorp.offsetHeight - 20)) {
+                        console.log("siu")
+                            puntaje++;
+                            console.log("Puntaje: " + puntaje);
+                            document.getElementById("puntaje").innerText = puntaje; 
+                    }
+                });
+            }
+        });
+        document.addEventListener("keyup", function(evento){
+            if(evento.key === "h"){
+                var elementos = document.querySelectorAll(".circulo");
+                elementos.forEach(function(elemento){
+                    var circleTop = parseInt(elemento.style.top);
+                    console.log(circleTop+" >= "+ (contenedorp.offsetHeight- 100) +" y "+circleTop+" <= "+(contenedorp.offsetHeight - 20))
+                    if (circleTop >= (contenedorp.offsetHeight - 100) && circleTop <= (contenedorp.offsetHeight - 20)) {
+                        console.log("siu")
+                            puntaje++;
+                            console.log("Puntaje: " + puntaje);
+                            document.getElementById("puntaje").innerText = puntaje; 
+                    }
+                });
+            }
+        });
+        document.addEventListener("keyup", function(evento){
+            if(evento.key === "j"){
+                var elementos = document.querySelectorAll(".circulo");
+                elementos.forEach(function(elemento){
+                    var circleTop = parseInt(elemento.style.top);
+                    console.log(circleTop+" >= "+ (contenedorp.offsetHeight- 100) +" y "+circleTop+" <= "+(contenedorp.offsetHeight - 20))
+                    if (circleTop >= (contenedorp.offsetHeight - 100) && circleTop <= (contenedorp.offsetHeight - 20)) {
+                        console.log("siu")
+                            puntaje++;
+                            console.log("Puntaje: " + puntaje);
+                            document.getElementById("puntaje").innerText = puntaje; 
+                    }
+                });
+            }
+        });
+        document.addEventListener("keyup", function(evento){
+            if(evento.key === "k"){
+                var elementos = document.querySelectorAll(".circulo");
+                elementos.forEach(function(elemento){
+                    var circleTop = parseInt(elemento.style.top);
+                    console.log(circleTop+" >= "+ (contenedorp.offsetHeight- 100) +" y "+circleTop+" <= "+(contenedorp.offsetHeight - 20))
+                    if (circleTop >= (contenedorp.offsetHeight - 100) && circleTop <= (contenedorp.offsetHeight - 20)) {
+                        console.log("siu")
+                            puntaje++;
+                            console.log("Puntaje: " + puntaje);
+                            document.getElementById("puntaje").innerText = puntaje; 
+                    }
+                });
+            }
+        });
+    </script>
+    <div id="puntaje">Puntaje: 0</div>
+    <div id="pausa">Presiona la tecla P para pausar</div>
+    <div id="mensajeJuego">Presiona las teclas F,G,H,J,K para tocar notas</div>
+
+
+
+
+
+</body>
+</html>
